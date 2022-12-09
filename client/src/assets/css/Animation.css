@@ -1,0 +1,67 @@
+@keyframes float {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  /* Animation */
+
+.polka-dot {
+    background: transparent;
+    background-image:
+          radial-gradient(var(--text-title) 20%, transparent 0), 
+          radial-gradient(var(--text-title) 20%, transparent 0);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+  }
+  
+  @keyframes MoveUpDown {
+    0%, 100% {
+        bottom: 5px;
+    }
+    50% {
+        bottom: 10px;
+    }
+  }
+  
+  @keyframes barber-pole-illusion {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
+  }
+  
+  /* button:hover {
+    background-image: repeating-linear-gradient(
+        -45deg, 
+        transparent, 
+        transparent 1rem,
+        transparent 1rem,
+        transparent 2rem
+    );
+    background-size: 200% 200%;
+    animation: barberpole 30s linear infinite;
+  }
+  
+  @keyframes barberpole {
+    2% {
+        background-image: repeating-linear-gradient(
+            -45deg, 
+            transparent, 
+            transparent 1rem,
+            rgba(var(--text-interactive), 0.8) 1rem,
+            rgba(var(--text-interactive), 0.8) 2rem
+        );
+    }
+    100% {
+        background-position: 100% 100%;
+    }
+  } */

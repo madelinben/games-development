@@ -1,0 +1,28 @@
+.animated-border {
+    border: 2px solid transparent;
+    background-image: transparent;
+}
+.animated-border::before, .animated-border::after {
+    position: absolute;
+    content: "";
+    width: 20px;
+    height: 20px;
+}
+.animated-border::before {
+    top: -2px;
+    left: -2px;
+    border-top: 2px solid var(--text-title);
+    border-left: 2px solid var(--text-title);
+    transition: 0.5s all;
+}
+.animated-border::after {
+    bottom: -2px;
+    right: -2px;
+    border-bottom: 2px solid var(--text-title);
+    border-right: 2px solid var(--text-title);
+    transition: 0.5s all;
+}
+.animated-border:hover::before, .animated-border:hover::after {
+    width: 100.2%;
+    height: 100%;
+}

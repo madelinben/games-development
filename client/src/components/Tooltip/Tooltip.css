@@ -1,0 +1,103 @@
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-wrapper .tooltip-text {
+    visibility: hidden;
+    /* display: none; */
+    width: auto;
+    min-width: 5rem;
+    background-color: var(--secondary-background);
+    color: var(--text-primary);
+    text-align: center;
+    padding: 0.5rem 0.5rem;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 9999;
+
+    top: -1.8rem;
+    right: 1rem;
+}
+
+.tooltip-wrapper .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -7px;
+    border-width: 7px;
+    border-style: solid;
+    border-color: transparent transparent transparent var(--secondary-background);
+  }
+
+/* .tooltip-wrapper .left .tooltip-text {
+    top: -5px;
+    right: 105%;
+}
+.tooltip-wrapper .tooltip-text::after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent var(--elem-secondary);
+}
+
+.tooltip-wrapper .right .tooltip-text {
+    top: -5px;
+    left: 105%;
+}
+.tooltip-wrapper .tooltip-text::after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent var(--elem-secondary) transparent transparent;
+}
+
+.tooltip-wrapper .top .tooltip-text {
+    width: 120px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+}
+.tooltip-wrapper .tooltip-text::after {
+  content: " ";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--elem-secondary) transparent transparent transparent;
+}
+
+.tooltip-wrapper .bottom .tooltip-text {
+    width: 120px;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px;
+}
+.tooltip-wrapper .tooltip-text::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent var(--elem-secondary) transparent;
+} */
+
+@media only screen and (min-width: 1007px) {
+    .nav-link:hover .tooltip-wrapper .tooltip-text {
+        visibility: visible;
+        /* display: inline; */
+    }
+}

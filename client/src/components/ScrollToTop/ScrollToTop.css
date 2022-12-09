@@ -1,0 +1,12 @@
+.scroll-link {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.scroll-link:hover {
+    border-bottom: 2px solid var(--text-title);
+}
+
+.scroll-link > span {
+    display: none;
+}
