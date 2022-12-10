@@ -1,4 +1,9 @@
 @charset "utf-8";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
 *, body {
