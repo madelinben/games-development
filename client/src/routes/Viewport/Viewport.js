@@ -106,7 +106,7 @@ function Sketch(wrapper) {
                 COL: null,
                 ROW: null,
                 CHUNK: 10,
-                DATA: null
+                DATA: []
             }
         }
 
@@ -187,62 +187,78 @@ function Sketch(wrapper) {
     
             for (let x=0; x<canvas.width; x+=TERRAIN.MAP.CHUNK) {
                 for (let y=0; y<canvas.height; y+=TERRAIN.MAP.CHUNK) {
-                    generateNoise = canvas.noise(0.01 * x, 0.01 * y);
+
+                    var CHUNK = {
+                        NOISE: canvas.noise(0.01 * x, 0.01 * y),
+                        BIOME: '',
+                        X: x,
+                        Y: y,
+                        COLOR: '',
+                        SIZE: 10,
+                        MOVE: false
+                    }
 
                     isSet = false;
-                    let chunk = null;
-    
-                    if (generateNoise < TERRAIN.ELEVATION.DEEP_WATER && isSet === false) {
-                        canvas.fill(canvas.color('#005C99'));
-                        canvas.rect(x, y, 10, 10);
+
+                    if (CHUNK.NOISE < TERRAIN.ELEVATION.DEEP_WATER && isSet === false) {
+                        CHUNK.BIOME = 'DEEP_WATER';
+                        CHUNK.COLOR = '#005C99';
+                        CHUNK.MOVE = false;
                         isSet = true;
                     }
-                    if (generateNoise < TERRAIN.ELEVATION.SHALLOW_WATER && isSet === false) {
-                        canvas.fill(canvas.color('#0099FF'));
-                        canvas.rect(x, y, 10, 10);
+                    if (CHUNK.NOISE < TERRAIN.ELEVATION.SHALLOW_WATER && isSet === false) {
+                        CHUNK.BIOME = 'SHALLOW_WATER';
+                        CHUNK.COLOR = '#0099FF';
+                        CHUNK.MOVE = false;
                         isSet = true;
                     }
-                    if (generateNoise < TERRAIN.ELEVATION.SANDY_BEACH && isSet === false) {
-                        canvas.fill(canvas.color('#FFFF00'));
-                        canvas.rect(x, y, 10, 10);
-                        isSet = true;
-                        chunk = 'SANDY_BEACH';
-                    }
-                    if (generateNoise < TERRAIN.ELEVATION.GRASS_PLAINS && isSet === false) {
-                        canvas.fill(canvas.color('#00FF00'));
-                        canvas.rect(x, y, 10, 10);
-                        isSet = true;
-                        chunk = 'GRASS_PLAINS';
-                    }
-                    if (generateNoise < TERRAIN.ELEVATION.DENSE_FORREST && isSet === false) {
-                        canvas.fill(canvas.color('#00CC00'));
-                        canvas.rect(x, y, 10, 10);
-                        isSet = true;
-                        chunk = 'DENSE_FORREST';
-                    }
-                    if (generateNoise < TERRAIN.ELEVATION.STONE_COBBLES && isSet === false) {
-                        canvas.fill(canvas.color('#595959'));
-                        canvas.rect(x, y, 10, 10);
-                        isSet = true;
-                        chunk = 'STONE_COBBLES';
-                    }
-                    if (generateNoise < TERRAIN.ELEVATION.STEEP_MOUNTAIN && isSet === false) {
-                        canvas.fill(canvas.color('#999999'));
-                        canvas.rect(x, y, 10, 10);
+                    if (CHUNK.NOISE < TERRAIN.ELEVATION.SANDY_BEACH && isSet === false) {
+                        CHUNK.BIOME = 'SANDY_BEACH';
+                        CHUNK.COLOR = '#FFFF00';
+                        CHUNK.MOVE = true;
                         isSet = true;
                     }
-                    if (generateNoise < TERRAIN.ELEVATION.SNOW_PEAK && isSet === false) {
-                        canvas.fill(canvas.color('#FFFFFF'));
-                        canvas.rect(x, y, 10, 10);
+                    if (CHUNK.NOISE < TERRAIN.ELEVATION.GRASS_PLAINS && isSet === false) {
+                        CHUNK.BIOME = 'GRASS_PLAINS';
+                        CHUNK.COLOR = '#00FF00';
+                        CHUNK.MOVE = true;
                         isSet = true;
-                        chunk = 'SNOW_PEAK';
                     }
+                    if (CHUNK.NOISE < TERRAIN.ELEVATION.DENSE_FORREST && isSet === false) {
+                        CHUNK.BIOME = 'DENSE_FORREST';
+                        CHUNK.COLOR = '#00CC00';
+                        CHUNK.MOVE = true;
+                        isSet = true;
+                    }
+                    if (CHUNK.NOISE < TERRAIN.ELEVATION.STONE_COBBLES && isSet === false) {
+                        CHUNK.BIOME = 'STONE_COBBLES';
+                        CHUNK.COLOR = '#595959';
+                        CHUNK.MOVE = true;
+                        isSet = true;
+                    }
+                    if (CHUNK.NOISE < TERRAIN.ELEVATION.STEEP_MOUNTAIN && isSet === false) {
+                        CHUNK.BIOME = 'STEEP_MOUNTAIN';
+                        CHUNK.COLOR = '#999999';
+                        CHUNK.MOVE = false;
+                        isSet = true;
+                    }
+                    if (CHUNK.NOISE < TERRAIN.ELEVATION.SNOW_PEAK && isSet === false) {
+                        CHUNK.BIOME = 'SNOW_PEAK';
+                        CHUNK.COLOR = '#FFFFFF';
+                        CHUNK.MOVE = true;
+                        isSet = true;
+                    }
+
+                    // Update chunk props
+                    canvas.fill(canvas.color(CHUNK.COLOR));
+                    canvas.rect(CHUNK.X, CHUNK.Y, TERRAIN.MAP.CHUNK, TERRAIN.MAP.CHUNK);
+                    TERRAIN.MAP.DATA.push(CHUNK);
 
                     // Check chunk closest to player spawn
                     let currentX = (x - CHARACTER.ORIGIN.X) + TERRAIN.MAP.CHUNK;
                     let currentY = (y - CHARACTER.ORIGIN.Y) + TERRAIN.MAP.CHUNK;
                     let distance = Math.sqrt((currentX*currentX) + (currentY*currentY));
-                    if ((distance <= CHARACTER.ORIGIN.DISTANCE) && (chunk !== null)) {
+                    if ((distance <= CHARACTER.ORIGIN.DISTANCE) && (CHUNK.MOVE === true)) {
                         CHARACTER.ORIGIN.DISTANCE = distance;
                         CHARACTER.POS.X = x;
                         CHARACTER.POS.Y = y;
