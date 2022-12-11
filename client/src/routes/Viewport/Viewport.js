@@ -118,6 +118,11 @@ function Sketch(wrapper) {
                 XP: 0,
                 PROMO: 10,
             },
+            ORIGIN: {
+                DISTANCE: 1000,
+                X: null,
+                Y: null
+            },
             POS: {
                 X: 0,
                 XSPEED: 10,
@@ -164,6 +169,8 @@ function Sketch(wrapper) {
             TERRAIN.MAP.COL = canvas.floor(canvas.width/TERRAIN.MAP.CHUNK);
             TERRAIN.MAP.ROW = canvas.floor(canvas.height/TERRAIN.MAP.CHUNK);
 
+            CHARACTER.ORIGIN.X = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.COL/2));
+            CHARACTER.ORIGIN.Y = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.ROW/2));
             CHARACTER.POS.X = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.COL/2));
             CHARACTER.POS.Y = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.ROW/2));
 
@@ -176,14 +183,14 @@ function Sketch(wrapper) {
         } */
     
         canvas.draw = () => {
-            // cols = canvas.floor(canvas.width / scl);
-            // rows = canvas.floor(canvas.height / scl);
+            // Adjust canvas x,y position based on updated player position
     
-            for (let x=0; x<canvas.width; x+=10) {
-                for (let y=0; y<canvas.height; y+=10) {
+            for (let x=0; x<canvas.width; x+=TERRAIN.MAP.CHUNK) {
+                for (let y=0; y<canvas.height; y+=TERRAIN.MAP.CHUNK) {
                     generateNoise = canvas.noise(0.01 * x, 0.01 * y);
-    
+
                     isSet = false;
+                    let chunk = null;
     
                     if (generateNoise < TERRAIN.ELEVATION.DEEP_WATER && isSet === false) {
                         canvas.fill(canvas.color('#005C99'));
@@ -199,21 +206,25 @@ function Sketch(wrapper) {
                         canvas.fill(canvas.color('#FFFF00'));
                         canvas.rect(x, y, 10, 10);
                         isSet = true;
+                        chunk = 'SANDY_BEACH';
                     }
                     if (generateNoise < TERRAIN.ELEVATION.GRASS_PLAINS && isSet === false) {
                         canvas.fill(canvas.color('#00FF00'));
                         canvas.rect(x, y, 10, 10);
                         isSet = true;
+                        chunk = 'GRASS_PLAINS';
                     }
                     if (generateNoise < TERRAIN.ELEVATION.DENSE_FORREST && isSet === false) {
                         canvas.fill(canvas.color('#00CC00'));
                         canvas.rect(x, y, 10, 10);
                         isSet = true;
+                        chunk = 'DENSE_FORREST';
                     }
                     if (generateNoise < TERRAIN.ELEVATION.STONE_COBBLES && isSet === false) {
                         canvas.fill(canvas.color('#595959'));
                         canvas.rect(x, y, 10, 10);
                         isSet = true;
+                        chunk = 'STONE_COBBLES';
                     }
                     if (generateNoise < TERRAIN.ELEVATION.STEEP_MOUNTAIN && isSet === false) {
                         canvas.fill(canvas.color('#999999'));
@@ -224,13 +235,36 @@ function Sketch(wrapper) {
                         canvas.fill(canvas.color('#FFFFFF'));
                         canvas.rect(x, y, 10, 10);
                         isSet = true;
+                        chunk = 'SNOW_PEAK';
+                    }
+
+                    // Check chunk closest to player spawn
+                    let currentX = (x - CHARACTER.ORIGIN.X) + TERRAIN.MAP.CHUNK;
+                    let currentY = (y - CHARACTER.ORIGIN.Y) + TERRAIN.MAP.CHUNK;
+                    let distance = Math.sqrt((currentX*currentX) + (currentY*currentY));
+                    if ((distance <= CHARACTER.ORIGIN.DISTANCE) && (chunk !== null)) {
+                        CHARACTER.ORIGIN.DISTANCE = distance;
+                        CHARACTER.POS.X = x;
+                        CHARACTER.POS.Y = y;
                     }
                 }
             }
 
+            canvas.fill(canvas.color('#DE73FF'));
+            canvas.rect(CHARACTER.ORIGIN.X, CHARACTER.ORIGIN.Y, TERRAIN.MAP.CHUNK, TERRAIN.MAP.CHUNK);
+
+            // Generate Loot and Quest Objectives
+
+            // Draw player and generated sprites/buildings
+
+            // Check possible moves or selected chunk
+
+            // Update player movement
+
             canvas.fill(canvas.color('#800080'));
             canvas.rect(CHARACTER.POS.X, CHARACTER.POS.Y, CHARACTER.SIZE.WIDTH, CHARACTER.SIZE.HEIGHT);
 
+            // Store updated chunks
     
             // setTerrain(TERRAIN_STORAGE);
         }
@@ -243,6 +277,7 @@ function Sketch(wrapper) {
 function Viewport() {
     const canvasRef = useRef();
 
+    /* Local Storage */
     const [terrain, setTerrain, removeTerrain] = useLocalStorage('terrain', null);
 
     useLayoutEffect(() => {
@@ -255,7 +290,11 @@ function Viewport() {
             {/* <SectionTitle title={'Home'} /> */}
             {/* <h1>Success 200: Welcome Home.</h1> */}
 
+            {/* Character Inventory Map Tabs */}
+
             <div id='canvas-wrapper' ref={canvasRef} />
+
+            {/* D-Pad and Analogue Stick */}
 
             {/* <pre>{JSON.stringify(terrain, null, 2)}</pre> */}
             
