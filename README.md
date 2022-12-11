@@ -108,6 +108,19 @@ Weapons/Tools and some additional Accessories were collected using the [Univeral
 
 # Terrain Generation
 
+Map chunks are procedurally generated using perlin noise to visualise the various terrain boundaries from a random seed.
+
+The terrain is broking into the following boundaries:
+* Deep Water
+* Shallow Water
+* Sand Beach
+* Grass Plains
+* Dense Forrest
+* Stone Cobbles
+* Steep Mountains
+* Snow Peaks
+
+
 ## Perlin Noise Algorithm
 
 ## Biome Diversity

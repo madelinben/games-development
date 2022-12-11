@@ -56,7 +56,7 @@ function App() {
                 <a id='skip-nav' href='#content-wrapper'>skip navigation</a>
 
                 <div className='header-logo'>
-                    <FaIcons.FaDice />
+                    {/* <FaIcons.FaDice /> */}
                     <span>Retro RPG Online</span>
                 </div>
 
