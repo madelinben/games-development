@@ -105,7 +105,7 @@ function Sketch(wrapper) {
                 HEIGHT: null,
                 COL: null,
                 ROW: null,
-                CHUNK: 10,
+                CHUNK: 50,
                 DATA: []
             }
         }
@@ -130,8 +130,8 @@ function Sketch(wrapper) {
                 YSPEED: 10,
             },
             SIZE: {
-                HEIGHT: 10,
-                WIDTH: 10
+                HEIGHT: TERRAIN.MAP.CHUNK,
+                WIDTH: TERRAIN.MAP.CHUNK
             },
             COMBAT: {
                 HEALTH: 50,
@@ -157,7 +157,7 @@ function Sketch(wrapper) {
             let parent = canvas.createCanvas(canvas.floor(CONTAINER.offsetWidth/TERRAIN.MAP.CHUNK)*TERRAIN.MAP.CHUNK, canvas.floor(CONTAINER.offsetHeight/TERRAIN.MAP.CHUNK)*TERRAIN.MAP.CHUNK); /* WEBGL */
             parent.parent(wrapper);
     
-            canvas.frameRate(60);
+            canvas.frameRate(1);
             canvas.angleMode(canvas.DEGREES);
             // canvas.rectMode(canvas.CENTER);
             canvas.noStroke();
@@ -185,8 +185,8 @@ function Sketch(wrapper) {
         canvas.draw = () => {
             // Adjust canvas x,y position based on updated player position
     
-            for (let x=0; x<canvas.width; x+=TERRAIN.MAP.CHUNK) {
-                for (let y=0; y<canvas.height; y+=TERRAIN.MAP.CHUNK) {
+            for (let y=0; y<canvas.width; y+=TERRAIN.MAP.CHUNK) {
+                for (let x=0; x<canvas.height; x+=TERRAIN.MAP.CHUNK) {
 
                     var CHUNK = {
                         NOISE: canvas.noise(0.01 * x, 0.01 * y),
@@ -283,6 +283,56 @@ function Sketch(wrapper) {
             // Store updated chunks
     
             // setTerrain(TERRAIN_STORAGE);
+        }
+
+        canvas.keyPressed = () => {
+            console.log(`${canvas.key}: ${canvas.keyCode}.`);
+            /* UP DOWN LEFT RIGHT DIG PLACE INVENTORY TOGGLELEFT TOGGLERIGHT */
+            const currentIndex = CHARACTER.POS.Y/TERRAIN.MAP.CHUNK * TERRAIN.MAP.COL + CHARACTER.POS.X/TERRAIN.MAP.CHUNK; /* rows * columns + col */
+
+            if (canvas.key === 'ArrowLeft') {
+                let newIndex = currentIndex - 1;
+
+                console.log(`X: ${CHARACTER.POS.X/TERRAIN.MAP.CHUNK} Y: ${CHARACTER.POS.Y/TERRAIN.MAP.CHUNK} Current: ${TERRAIN.MAP.DATA[currentIndex].BIOME}, New: ${TERRAIN.MAP.DATA[newIndex].BIOME}`);
+
+                if (TERRAIN.MAP.DATA[newIndex].MOVE === true) {
+                    CHARACTER.POS.X = CHARACTER.POS.X - TERRAIN.MAP.CHUNK;
+                }
+            } else if (canvas.key === 'ArrowUp') {
+                let newIndex = currentIndex - TERRAIN.MAP.COL;
+                
+                console.log(`X: ${CHARACTER.POS.X/TERRAIN.MAP.CHUNK} Y: ${CHARACTER.POS.Y/TERRAIN.MAP.CHUNK} Current: ${TERRAIN.MAP.DATA[currentIndex].BIOME}, New: ${TERRAIN.MAP.DATA[newIndex].BIOME}`);
+
+                if (TERRAIN.MAP.DATA[newIndex].MOVE === true) {
+                    CHARACTER.POS.Y = CHARACTER.POS.Y - TERRAIN.MAP.CHUNK;
+                }
+            } else if (canvas.key === 'ArrowRight') {
+                let newIndex = currentIndex + 1;
+                
+                console.log(`X: ${CHARACTER.POS.X/TERRAIN.MAP.CHUNK} Y: ${CHARACTER.POS.Y/TERRAIN.MAP.CHUNK} Current: ${TERRAIN.MAP.DATA[currentIndex].BIOME}, New: ${TERRAIN.MAP.DATA[newIndex].BIOME}`);
+
+                if (TERRAIN.MAP.DATA[newIndex].MOVE === true) {
+                    CHARACTER.POS.X = CHARACTER.POS.X + TERRAIN.MAP.CHUNK;
+                }
+            } else if (canvas.key === 'ArrowDown') {
+                let newIndex = currentIndex + TERRAIN.MAP.COL;
+                
+                console.log(`X: ${CHARACTER.POS.X/TERRAIN.MAP.CHUNK} Y: ${CHARACTER.POS.Y/TERRAIN.MAP.CHUNK} Current: ${TERRAIN.MAP.DATA[currentIndex].BIOME}, New: ${TERRAIN.MAP.DATA[newIndex].BIOME}`);
+
+                if (TERRAIN.MAP.DATA[newIndex].MOVE === true) {
+                    CHARACTER.POS.Y = CHARACTER.POS.Y + TERRAIN.MAP.CHUNK;
+                }
+            } else if (canvas.key === 'q') { /* DIG */
+
+            } else if (canvas.key === 'w') { /* PLACE */
+
+            } else if (canvas.key === 'e') { /* INVENTORY */
+
+            } else if (canvas.key === ',') { /* < */
+
+            } else if (canvas.key === '.') { /* > */
+
+            }
         }
 
 
