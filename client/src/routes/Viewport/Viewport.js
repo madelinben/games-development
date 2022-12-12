@@ -92,7 +92,7 @@ function Sketch(wrapper) {
             ELEVATION: TERRAIN_ELEVATION,
             SEED: null,
             CONFIG: {
-                TYPE: 'perlin',
+                TYPE: 'perlin', // 'simplex'
                 AMPLITUDE: 1,
                 AMPLITUDE_COEFFICIENT: 0.5,
                 FREQUENCY: 0.5,
@@ -101,6 +101,7 @@ function Sketch(wrapper) {
                 ENABLE_SHADOW: false
             },
             MAP: {
+                SEED: 99,
                 POINTER: {
                     X: 0,
                     Y: 0
@@ -179,6 +180,8 @@ function Sketch(wrapper) {
             CHARACTER.ORIGIN.Y = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.ROW/2));
             CHARACTER.POS.X = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.COL/2));
             CHARACTER.POS.Y = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.ROW/2));
+
+            canvas.noiseSeed(TERRAIN.MAP.SEED);
 
             canvas.background('#ffffff');
 
