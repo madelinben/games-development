@@ -230,53 +230,89 @@ function Sketch(wrapper) {
                         CHUNK.RENDERED = false;
 
                         let isSet = false;
+                        let isStructure = Math.random();
                         if (CHUNK.NOISE < TERRAIN.ELEVATION.DEEP_WATER && isSet === false) {
                             CHUNK.BIOME = 'DEEP_WATER';
                             CHUNK.COLOR = '#005C99';
                             CHUNK.MOVE = false;
                             isSet = true;
+                            if (isStructure < 0.01) {
+                                CHUNK.STRUCTURE = 'SHIP_WRECK';
+                                CHUNK.COLOR = '#002E4D';
+                            }
                         }
                         if (CHUNK.NOISE < TERRAIN.ELEVATION.SHALLOW_WATER && isSet === false) {
                             CHUNK.BIOME = 'SHALLOW_WATER';
                             CHUNK.COLOR = '#0099FF';
                             CHUNK.MOVE = false;
                             isSet = true;
+                            if (isStructure < 0.01) {
+                                CHUNK.STRUCTURE = 'CORAL_REEF';
+                                CHUNK.COLOR = '#99005C';
+                            }
                         }
                         if (CHUNK.NOISE < TERRAIN.ELEVATION.SANDY_BEACH && isSet === false) {
                             CHUNK.BIOME = 'SANDY_BEACH';
                             CHUNK.COLOR = '#FFFF00';
                             CHUNK.MOVE = true;
                             isSet = true;
+                            if (isStructure < 0.01) {
+                                CHUNK.STRUCTURE = 'TREASURE_CHEST';
+                                CHUNK.COLOR = '#E6CF00';
+                            }
                         }
                         if (CHUNK.NOISE < TERRAIN.ELEVATION.GRASS_PLAINS && isSet === false) {
                             CHUNK.BIOME = 'GRASS_PLAINS';
                             CHUNK.COLOR = '#00FF00';
                             CHUNK.MOVE = true;
                             isSet = true;
+                            if (isStructure < 0.01) {
+                                CHUNK.STRUCTURE = 'CASTLE';
+                                CHUNK.COLOR = '#737373';
+                            } else if (isStructure < 0.03) {
+                                CHUNK.STRUCTURE = 'TOWN';
+                                CHUNK.COLOR = '#A5682A';
+                            }
                         }
                         if (CHUNK.NOISE < TERRAIN.ELEVATION.DENSE_FORREST && isSet === false) {
                             CHUNK.BIOME = 'DENSE_FORREST';
                             CHUNK.COLOR = '#00CC00';
                             CHUNK.MOVE = true;
                             isSet = true;
+                            if (isStructure < 0.01) {
+                                CHUNK.STRUCTURE = 'WITCH_HUT';
+                                CHUNK.COLOR = '#A52AA5';
+                            }
                         }
                         if (CHUNK.NOISE < TERRAIN.ELEVATION.STONE_COBBLES && isSet === false) {
                             CHUNK.BIOME = 'STONE_COBBLES';
                             CHUNK.COLOR = '#595959';
                             CHUNK.MOVE = true;
                             isSet = true;
+                            if (isStructure < 0.01) {
+                                CHUNK.STRUCTURE = 'ANCIENT_FOSSIL';
+                                CHUNK.COLOR = '#333333';
+                            }
                         }
                         if (CHUNK.NOISE < TERRAIN.ELEVATION.STEEP_MOUNTAIN && isSet === false) {
                             CHUNK.BIOME = 'STEEP_MOUNTAIN';
                             CHUNK.COLOR = '#999999';
                             CHUNK.MOVE = false;
                             isSet = true;
+                            if (isStructure < 0.01) {
+                                CHUNK.STRUCTURE = 'CAVE_TROLL';
+                                CHUNK.COLOR = '#4D4D4D';
+                            }
                         }
                         if (CHUNK.NOISE < TERRAIN.ELEVATION.SNOW_PEAK && isSet === false) {
                             CHUNK.BIOME = 'SNOW_PEAK';
                             CHUNK.COLOR = '#FFFFFF';
                             CHUNK.MOVE = true;
                             isSet = true;
+                            /* if (isStructure < 0.01) {
+                                CHUNK.STRUCTURE = 'HUNTING_LODGE';
+                                CHUNK.COLOR = '#E6E6E6';
+                            } */
                         }
 
                         TERRAIN.MAP.DATA.push(CHUNK);
