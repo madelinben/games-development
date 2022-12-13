@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useLayoutEffect, useRef} from 'react';
+import React, {useState, useEffect, useLayoutEffect, useRef, useId} from 'react';
 import p5 from 'p5';
 
 import { useLocalStorage } from '../../hooks/useStorage/useStorage';
@@ -76,6 +76,8 @@ function Sketch(wrapper) {
     return (canvas) => {
         const CONTAINER = document.getElementById('viewport-wrapper');
         // const ctx = canvas.getContext('2d');
+
+        let INIT = true;
 
         const TERRAIN_ELEVATION = Object.freeze({
           DEEP_WATER: 0.3,
@@ -180,7 +182,12 @@ function Sketch(wrapper) {
             CHARACTER.ORIGIN.Y = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.ROW/2));
             CHARACTER.POS.X = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.COL/2));
             CHARACTER.POS.Y = TERRAIN.MAP.CHUNK * (canvas.floor(TERRAIN.MAP.ROW/2));
+            CHARACTER.CURSOR.X = CHARACTER.POS.X;
+            CHARACTER.CURSOR.Y = CHARACTER.POS.Y;
 
+            if (TERRAIN.CONFIG.GENERATE_SEED === true) {
+                TERRAIN.MAP.SEED = Math.floor(Math.random() * (999999 + 1));
+            }
             canvas.noiseSeed(TERRAIN.MAP.SEED);
 
             canvas.background('#ffffff');
@@ -325,14 +332,18 @@ function Sketch(wrapper) {
                         canvas.rect(CHUNK.X, CHUNK.Y, TERRAIN.MAP.CHUNK, TERRAIN.MAP.CHUNK);
                     }
 
-                    // Identify closest chunk to spawn 
-                    let currentX = (x - CHARACTER.ORIGIN.X) + TERRAIN.MAP.CHUNK;
-                    let currentY = (y - CHARACTER.ORIGIN.Y) + TERRAIN.MAP.CHUNK;
-                    let distance = Math.sqrt((currentX*currentX) + (currentY*currentY));
-                    if ((distance <= CHARACTER.ORIGIN.DISTANCE) && (CHUNK.MOVE === true)) {
-                        CHARACTER.ORIGIN.DISTANCE = distance;
-                        CHARACTER.POS.X = x;
-                        CHARACTER.POS.Y = y;
+                    if (INIT === true) {
+                        // Identify closest chunk to spawn 
+                        let currentX = (x - CHARACTER.ORIGIN.X) + TERRAIN.MAP.CHUNK;
+                        let currentY = (y - CHARACTER.ORIGIN.Y) + TERRAIN.MAP.CHUNK;
+                        let distance = Math.sqrt((currentX*currentX) + (currentY*currentY));
+                        if ((distance <= CHARACTER.ORIGIN.DISTANCE) && (CHUNK.MOVE === true)) {
+                            CHARACTER.ORIGIN.DISTANCE = distance;
+                            CHARACTER.POS.X = x;
+                            CHARACTER.POS.Y = y;
+                            CHARACTER.CURSOR.X = CHARACTER.POS.X;
+                            CHARACTER.CURSOR.Y = CHARACTER.POS.Y;
+                        }
                     }
 
 
@@ -362,62 +373,86 @@ function Sketch(wrapper) {
             
             // Empty Chunk Cache
             // TERRAIN.MAP.DATA = [];
+            INIT = false;
         }
 
         canvas.keyPressed = () => {
             console.log(`${canvas.key}: ${canvas.keyCode}.`);
-            /* UP DOWN LEFT RIGHT DIG PLACE INVENTORY TOGGLELEFT TOGGLERIGHT */
-            const currentIndex = CHARACTER.POS.Y/TERRAIN.MAP.CHUNK * TERRAIN.MAP.COL + CHARACTER.POS.X/TERRAIN.MAP.CHUNK; /* rows * columns + col */
 
-            if (canvas.key === 'ArrowLeft') {
-                let newIndex = currentIndex - 1;
+            const CURRENT_CHUNK = TERRAIN.MAP.DATA.findIndex((chunk) => chunk.X === CHARACTER.POS.X && chunk.Y === CHARACTER.POS.Y);
+            if (CURRENT_CHUNK !== -1) {
+                console.log(`CHHARACTER X:${TERRAIN.MAP.DATA[CURRENT_CHUNK].X} Y:${TERRAIN.MAP.DATA[CURRENT_CHUNK].Y}`);
 
-                console.log(`X: ${CHARACTER.POS.X/TERRAIN.MAP.CHUNK} Y: ${CHARACTER.POS.Y/TERRAIN.MAP.CHUNK} Current: ${TERRAIN.MAP.DATA[currentIndex].BIOME}, New: ${TERRAIN.MAP.DATA[newIndex].BIOME}`);
+                if (canvas.key === 'ArrowUp') {
+                    const CURSOR_CHUNK = TERRAIN.MAP.DATA.findIndex((chunk) => chunk.X === CHARACTER.POS.X && chunk.Y === (CHARACTER.POS.Y - TERRAIN.MAP.CHUNK));
+                    if (CURSOR_CHUNK !== -1) {
+                        if (TERRAIN.MAP.DATA[CURRENT_CHUNK].MOVE === true) {
+                            CHARACTER.CURSOR.Y = CHARACTER.POS.Y - TERRAIN.MAP.CHUNK;
+                            console.log(`CURSOR X:${CHARACTER.CURSOR.X} Y:${CHARACTER.CURSOR.Y}`);
+                        } else {
+                            console.log(`Cannot move to this chunk.`);
+                        }
+                    } else {
+                        console.log(`Could not identify cursor chunk.`);
+                    }
+                } else if (canvas.key === 'ArrowDown') {
+                    const CURSOR_CHUNK = TERRAIN.MAP.DATA.findIndex((chunk) => chunk.X === CHARACTER.POS.X && chunk.Y === (CHARACTER.POS.Y + TERRAIN.MAP.CHUNK));
+                    if (CURSOR_CHUNK !== -1) {
+                        if (TERRAIN.MAP.DATA[CURRENT_CHUNK].MOVE === true) {
+                            CHARACTER.CURSOR.Y = CHARACTER.POS.Y + TERRAIN.MAP.CHUNK;
+                            console.log(`CURSOR X:${CHARACTER.CURSOR.X} Y:${CHARACTER.CURSOR.Y}`);
+                        } else {
+                            console.log(`Cannot move to this chunk.`);
+                        }
+                    } else {
+                        console.log(`Could not identify cursor chunk.`);
+                    }
+                } else if (canvas.key === 'ArrowLeft') {
+                    const CURSOR_CHUNK = TERRAIN.MAP.DATA.findIndex((chunk) => chunk.X === (CHARACTER.POS.X - TERRAIN.MAP.CHUNK) && chunk.Y === CHARACTER.POS.Y);
+                    if (CURSOR_CHUNK !== -1) {
+                        if (TERRAIN.MAP.DATA[CURRENT_CHUNK].MOVE === true) {
+                            CHARACTER.CURSOR.X = CHARACTER.POS.X - TERRAIN.MAP.CHUNK;
+                            console.log(`CURSOR X:${CHARACTER.CURSOR.X} Y:${CHARACTER.CURSOR.Y}`);
+                        } else {
+                            console.log(`Cannot move to this chunk.`);
+                        }
+                    } else {
+                        console.log(`Could not identify cursor chunk.`);
+                    }
+                } else if (canvas.key === 'ArrowRight') {
+                    const CURSOR_CHUNK = TERRAIN.MAP.DATA.findIndex((chunk) => chunk.X === (CHARACTER.POS.X + TERRAIN.MAP.CHUNK) && chunk.Y === CHARACTER.POS.Y);
+                    if (CURSOR_CHUNK !== -1) {
+                        if (TERRAIN.MAP.DATA[CURRENT_CHUNK].MOVE === true) {
+                            CHARACTER.CURSOR.X = CHARACTER.POS.X + TERRAIN.MAP.CHUNK;
+                            console.log(`CURSOR X:${CHARACTER.CURSOR.X} Y:${CHARACTER.CURSOR.Y}`);
+                        } else {
+                            console.log(`Cannot move to this chunk.`);
+                        }
+                    } else {
+                        console.log(`Could not identify cursor chunk.`);
+                    }
+                } else if (canvas.key === 'q') { /* DIG */
 
-                if (TERRAIN.MAP.DATA[newIndex].MOVE === true) {
-                    // CHARACTER.POS.X = CHARACTER.POS.X - TERRAIN.MAP.CHUNK;
-                    CHARACTER.CURSOR.X = CHARACTER.POS.X - TERRAIN.MAP.CHUNK;
+
+
+
+                } else if (canvas.key === 'w') { /* PLACE */
+
+                } else if (canvas.key === 'e') { /* INVENTORY */
+
+                } else if (canvas.key === ',') { /* < */
+                    TERRAIN.MAP.POINTER.X = TERRAIN.MAP.POINTER.X - TERRAIN.MAP.CHUNK;
+
+                } else if (canvas.key === '.') { /* > */
+                    TERRAIN.MAP.POINTER.X = TERRAIN.MAP.POINTER.X + TERRAIN.MAP.CHUNK;
+
                 }
-            } else if (canvas.key === 'ArrowUp') {
-                let newIndex = currentIndex - TERRAIN.MAP.COL;
-                
-                console.log(`X: ${CHARACTER.POS.X/TERRAIN.MAP.CHUNK} Y: ${CHARACTER.POS.Y/TERRAIN.MAP.CHUNK} Current: ${TERRAIN.MAP.DATA[currentIndex].BIOME}, New: ${TERRAIN.MAP.DATA[newIndex].BIOME}`);
 
-                if (TERRAIN.MAP.DATA[newIndex].MOVE === true) {
-                    // CHARACTER.POS.Y = CHARACTER.POS.Y - TERRAIN.MAP.CHUNK;
-                    CHARACTER.CURSOR.Y = CHARACTER.POS.Y - TERRAIN.MAP.CHUNK;
-                }
-            } else if (canvas.key === 'ArrowRight') {
-                let newIndex = currentIndex + 1;
-                
-                console.log(`X: ${CHARACTER.POS.X/TERRAIN.MAP.CHUNK} Y: ${CHARACTER.POS.Y/TERRAIN.MAP.CHUNK} Current: ${TERRAIN.MAP.DATA[currentIndex].BIOME}, New: ${TERRAIN.MAP.DATA[newIndex].BIOME}`);
 
-                if (TERRAIN.MAP.DATA[newIndex].MOVE === true) {
-                    // CHARACTER.POS.X = CHARACTER.POS.X + TERRAIN.MAP.CHUNK;
-                    CHARACTER.CURSOR.X = CHARACTER.POS.X + TERRAIN.MAP.CHUNK;
-                }
-            } else if (canvas.key === 'ArrowDown') {
-                let newIndex = currentIndex + TERRAIN.MAP.COL;
-                
-                console.log(`X: ${CHARACTER.POS.X/TERRAIN.MAP.CHUNK} Y: ${CHARACTER.POS.Y/TERRAIN.MAP.CHUNK} Current: ${TERRAIN.MAP.DATA[currentIndex].BIOME}, New: ${TERRAIN.MAP.DATA[newIndex].BIOME}`);
 
-                if (TERRAIN.MAP.DATA[newIndex].MOVE === true) {
-                    // CHARACTER.POS.Y = CHARACTER.POS.Y + TERRAIN.MAP.CHUNK;
-                    CHARACTER.CURSOR.Y = CHARACTER.POS.Y + TERRAIN.MAP.CHUNK;
-                }
-            } else if (canvas.key === 'q') { /* DIG */
-
-            } else if (canvas.key === 'w') { /* PLACE */
-
-            } else if (canvas.key === 'e') { /* INVENTORY */
-
-            } else if (canvas.key === ',') { /* < */
-                TERRAIN.MAP.POINTER.X = TERRAIN.MAP.POINTER.X - TERRAIN.MAP.CHUNK;
-
-            } else if (canvas.key === '.') { /* > */
-                TERRAIN.MAP.POINTER.X = TERRAIN.MAP.POINTER.X + TERRAIN.MAP.CHUNK;
-
-            }
+            } else {
+                console.log(`Could not identify current chunk.`);
+            } 
         }
 
 
@@ -426,6 +461,7 @@ function Sketch(wrapper) {
 }
 
 function Viewport() {
+    const id = useId();
     const canvasRef = useRef();
 
     /* Local Storage */
@@ -443,7 +479,7 @@ function Viewport() {
 
             {/* Character Inventory Map Tabs */}
 
-            <div id='canvas-wrapper' ref={canvasRef} />
+            <div id={id} className='canvas-wrapper' ref={canvasRef} />
 
             {/* D-Pad and Analogue Stick */}
 
